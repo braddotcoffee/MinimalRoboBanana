@@ -19,10 +19,14 @@ class ViewerCommands(app_commands.Group, name="hooj"):
         self.client = client
 
     @app_commands.command(name="redeem")
-    @app_commands.describe(name="Name of reward to redeem")
-    async def redeem_reward(self, interaction: Interaction, name: str):
+    async def redeem_reward(self, interaction: Interaction):
         """Redeem an available channel reward"""
-        await RewardController.redeem_reward(name, interaction)
+        rewards = DB().get_channel_rewards()
+        user_points = DB().get_point_balance(interaction.user.id)
+        view = RedeemRewardView(user_points, rewards, self.client)
+        await interaction.response.send_message(
+            f"You currently have {user_points} points", view=view, ephemeral=True
+        )
 
     @app_commands.command(name="list_rewards")
     async def list_rewards(self, interaction: Interaction):

@@ -35,14 +35,10 @@ class ModCommands(app_commands.Group, name="mod"):
 
     @app_commands.command(name="add_reward")
     @app_commands.checks.has_role("Mod")
-    @app_commands.describe(name="Name of reward to add")
-    @app_commands.describe(points="Number of points to charge")
-    async def add_reward(self, interaction: Interaction, name: str, points: int):
+    async def add_reward(self, interaction: Interaction):
         """Creates new channel reward for redemption"""
-        # Write this to the db
-        DB().add_channel_reward(name, points)
-        # respond to interaction saying we succeeded
-        await interaction.response.send_message(f"New reward added!", ephemeral=True)
+        modal = AddRewardModal()
+        await interaction.response.send_modal(modal)
 
     @app_commands.command(name="remove_reward")
     @app_commands.checks.has_role("Mod")
